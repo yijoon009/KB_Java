@@ -1,0 +1,20 @@
+
+		컴파일	(Binary file)			 <-----Build단계------->
+ArrayEx01.java	->	ArraryEx01.class	->	링크(link)->로더단계(Loader)	-> 실행(run)
+								
+								-로더 단계에서 static 붙어
+								있는 멤버들을 올려줘
+								-자동으로 메소드 영역에 올려
+									준다
+
+								static에 올라가 있는 멤버를
+								클래스 멤버라 부름
+
+
+
+
+
+
+
+
+
