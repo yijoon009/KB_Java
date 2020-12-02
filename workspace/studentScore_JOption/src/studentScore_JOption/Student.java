@@ -3,12 +3,15 @@ package studentScore_JOption;
 public class Student {
 	private String name;
 	private int num;
+	private static int Fnum = 1001;
 	private int s1;
 	private int s2;
 	private int avg;
 	private int rank;
 	
+	
 	public Student() {;}
+	
 	public String getName() {
 		return name;
 	}
@@ -19,7 +22,7 @@ public class Student {
 		return num;
 	}
 	public void setNum(int num) {
-		this.num = num;
+		this.num = Fnum++;
 	}
 	public int getS1() {
 		return s1;
