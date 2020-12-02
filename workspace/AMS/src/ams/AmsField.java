@@ -37,7 +37,11 @@ public class AmsField {
 	//삭제하기
 	void delete(String keyword) {
 		for (int i = 0; i < cnt; i++) {
-			
+			if(arrPlane[i][1].equals(keyword)) {
+				for (int j = i; j < cnt-1; j++) {
+					 
+				}
+			}
 		}
 		
 	}

@@ -21,7 +21,6 @@ public class ArrayTest {
 		
 	}
 }
-
 class Car{
 	
 }
