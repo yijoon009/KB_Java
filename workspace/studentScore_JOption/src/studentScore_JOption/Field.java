@@ -1,7 +1,7 @@
 package studentScore_JOption;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -11,7 +11,8 @@ import javax.swing.JOptionPane;
 public class Field {
 	ArrayList<Account> acList = new ArrayList<>();
 	ArrayList<Student> stuList = new ArrayList<>();
-	Map<ArrayList<Account>,ArrayList<Student>> dataBase = new HashMap<>();
+//	Map<ArrayList<Account>,ArrayList<Student>> dataBase = new HashMap<>();
+	Map<Account,Student> dataBase = new HashMap<>();
 	Account ac;
 	Student st;
 	
@@ -42,7 +43,7 @@ public class Field {
 		
 		//회원가입id
 		do {
-			String input = JOptionPane.showInputDialog("아이디를 입력해주세요. (영문으로 시작, 8자 이내 (숫자 포함  가능)");
+			String input = JOptionPane.showInputDialog("아이디를 입력해주세요. (영문으로 시작, 8자 이내 (숫자 포함  가능))");
 			if(input.length()==0) {
 				JOptionPane.showMessageDialog(null, "아이디를 입력해주시길 바랍니다.");
 				continue;
@@ -59,7 +60,7 @@ public class Field {
 				}else {
 					//id중복검사
 					for(Account alid : acList) {
-						if((input.equals(alid.getId()))){
+						if(input.equals(alid.getId())){
 							JOptionPane.showMessageDialog(null, "이미 존재하는 ID입니다.");
 						}else {
 							ac = new Account();
@@ -75,7 +76,7 @@ public class Field {
 		
 		//회원가입pw
 		do {
-			String input = JOptionPane.showInputDialog("비밀먼호를 입력해주세요. (숫자만 가능)");
+			String input = JOptionPane.showInputDialog("비밀번호를 입력해주세요. (숫자만 가능)");
 			if(input.length()==0) {
 				JOptionPane.showMessageDialog(null, "비밀번호를 입력해주시길 바랍니다.");
 				continue;
@@ -125,37 +126,39 @@ public class Field {
 			}while(classCh);
 			data = false;
 		}while(data);
-		
+		JOptionPane.showMessageDialog(null, "축하합니다!\n회원가입이 완료되었습니다.");
 		acList.add(ac);
-		
 	}//end setUser
 	
 	//로그인
 	public void login() {
-		boolean lg2 = true;
+		boolean idCh = true, pwCh = false;
 		Account user = null;
 		
+		
 		//id check
-		while(true) {
+		while(idCh) {
 			String id = JOptionPane.showInputDialog("아이디를 입력하세요.");
-			for(Account data : acList) {
-				if(id.equals(data.getId())) {
-					//id까진 pass
-					do {
-						String pw = JOptionPane.showInputDialog("비밀번호를 입력하세요.");
-						if(pw.equals(data.getPw())) {
-							user = data;
-							lg2 = false;
-							menuView(user);
-						}else {
-							JOptionPane.showMessageDialog(null, "비밀번호가 틀렸습니다. 다시 시도해주세요.");
-						}
-					}while(lg2);
-				}else {
-					//맞는 id 쳤는데 왜 일로들어와?
-					JOptionPane.showMessageDialog(null, "존재하지 않는 ID거나, 틀린 ID입니다.");
-					continue;	//???
+			Iterator<Account> iter = acList.iterator();
+			while(iter.hasNext()) {
+				Account acCh = iter.next();
+				if(acCh.getId().equals(id)){
+					user = acCh;
+					idCh = false;
+					pwCh = true;
 				}
+			}
+			if(user==null) {
+				JOptionPane.showMessageDialog(null, "존재하지 않거나, 틀린 ID입니다.");
+			}
+		}
+		while(pwCh) {
+			String pw = JOptionPane.showInputDialog("비밀번호를 입력하세요.");
+			if(user.getPw().equals(pw)) {
+				menuView(user);
+				break;
+			}else {
+				JOptionPane.showMessageDialog(null, "비밀번호가 틀렸습니다. 다시 시도해주세요.");
 			}
 		}
 	}//end login
@@ -176,12 +179,13 @@ public class Field {
 				input(user);
 				break;
 			case 1://삭제
-				delete();
+				delete(user);
 				break;
 			case 2://출력
 				show(user);
 				break;
 			case 3://수정
+				update(user);
 				break;
 			case 4:
 				System.exit(0);
@@ -236,7 +240,7 @@ public class Field {
 			
 			st.setSum(st.getMid()+st.getFin());
 			st.setAvg(st.getSum()/ 2.0);
-			
+			st.setRank(1);
 			//등수 구하기
 //			for (int i = 0; i < stuList.size()-1; i++) {
 //				if(st.getSum()>st.getSum()) {
@@ -245,19 +249,96 @@ public class Field {
 //				}
 //			}
 			stuList.add(st);
+			dataBase.put(user, st);
+			Iterator<Object> i
+			for (int i = 0; i < array.length; i++) {
+				
+			}
+			System.out.println(dataBase.get(user));
+			
+			show(user);
 			input = false;
 		}while(input);
 	}//end input
 	
 	//삭제
-	public void delete() {
+	public void delete(Account user) {
+		int choice = 0;
+		Student delst = null;
+		String introMsg = "◐◐◐◐◐◐◐학생 성적 관리 프로그램◑◑◑◑◑◑◑\n"+"학교 : " +user.getSchool()+"     학년 : "+user.getGrade()+"     반 : "+user.getClass_name()+"\n";
+		choice = Integer.parseInt(JOptionPane.showInputDialog(introMsg+"\n"+stuList.toString()+"\n삭제할 학생의 학번을 입력하세요."));
+		
+		Iterator<Student> iter = stuList.iterator();
+		
+		while(iter.hasNext()) {
+			Student stud = iter.next();
+			if(choice == stud.getNum()) {
+				delst = stud;
+			}
+		}
+		if(delst == null) {
+			JOptionPane.showMessageDialog(null, "찾으시는 학생이 없습니다.");
+		}else {
+			stuList.remove(delst);
+			JOptionPane.showMessageDialog(null, "해당 학생의 데이터가 삭제되었습니다.");
+			JOptionPane.showMessageDialog(null, stuList.toString());
+		}
+		
+		
+	}
+	
+	public void update(Account user) {
+		int choice = 0;
+		boolean s1Ch = true, s2Ch = true;
+		Student uplst = null;
+		String introMsg = "◐◐◐◐◐◐◐학생 성적 관리 프로그램◑◑◑◑◑◑◑\n"+"학교 : " +user.getSchool()+"     학년 : "+user.getGrade()+"     반 : "+user.getClass_name()+"\n";
+		choice = Integer.parseInt(JOptionPane.showInputDialog(introMsg+"\n"+stuList.toString()+"\n수정할 학생의 학번을 입력하세요."));
+		
+		Iterator<Student> iter = stuList.iterator();
+		
+		while(iter.hasNext()) {
+			Student stud = iter.next();
+			if(choice == stud.getNum()) {
+				uplst = stud;
+			}
+		}
+		if(uplst == null) {
+			JOptionPane.showMessageDialog(null, "찾으시는 학생이 없습니다.");
+		}else {
+			//해당학생 찾았으면
+			while(s1Ch) {
+				String s1 = JOptionPane.showInputDialog(introMsg + "\n\n중간고사 성적을 입력하세요.");
+				if(!s1.matches("^[0-9]$")) {
+					uplst.setMid(Integer.parseInt(s1));
+					s1Ch = false;
+				}else {
+					JOptionPane.showMessageDialog(null, "숫자만 입력하세요.");
+				}
+			}
+			
+			//기말고사 입력
+			while(s2Ch){
+				String s2 = JOptionPane.showInputDialog(introMsg + "\n\n기말고사 성적을 입력하세요.");
+				if(!s2.matches("^[0-9]$")) {
+					uplst.setFin(Integer.parseInt(s2));
+					s2Ch = false;
+				}else {
+					JOptionPane.showMessageDialog(null, "숫자만 입력하세요.");
+				}
+			}
+			uplst.setSum(uplst.getMid()+uplst.getFin());
+			uplst.setAvg(uplst.getSum()/2.0);
+			show(user);
+		}
+		
+		
 		
 	}
 
 	//출력(맨처음 
 	public void show(Account user) {
 		String introMsg = "◐◐◐◐◐◐◐학생 성적 관리 프로그램◑◑◑◑◑◑◑\n"+"학교 : " +user.getSchool()+"     학년 : "+user.getGrade()+"     반 : "+user.getClass_name()+"\n";
-		JOptionPane.showMessageDialog(null, stuList.toString());
+		JOptionPane.showMessageDialog(null, introMsg+stuList.toString());
 		
 	}
 }
