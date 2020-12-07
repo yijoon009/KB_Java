@@ -10,9 +10,8 @@ import javax.swing.JOptionPane;
 
 public class Field {
 	ArrayList<Account> acList = new ArrayList<>();
-	ArrayList<Student> stuList = new ArrayList<>();
-//	Map<ArrayList<Account>,ArrayList<Student>> dataBase = new HashMap<>();
-	Map<Account,Student> dataBase = new HashMap<>();
+	ArrayList<Student> stuList;
+	Map<Account,ArrayList<Student>> dataBase = new HashMap<>();
 	Account ac;
 	Student st;
 	
@@ -20,6 +19,7 @@ public class Field {
 	
 	//제일 첫화면 (회원가입, 로그인)
 	public void startView() {
+		
 		int choice = 0;
 		String[] menu = {"회원가입", "로그인"};
 		while(true) {
@@ -128,13 +128,15 @@ public class Field {
 		}while(data);
 		JOptionPane.showMessageDialog(null, "축하합니다!\n회원가입이 완료되었습니다.");
 		acList.add(ac);
+		
+
 	}//end setUser
 	
 	//로그인
 	public void login() {
 		boolean idCh = true, pwCh = false;
 		Account user = null;
-		
+		//user 전역변수로 넣어봐?
 		
 		//id check
 		while(idCh) {
@@ -165,6 +167,9 @@ public class Field {
 		
 	//로그인 성공시 메뉴 보여주기
 	public void menuView(Account user) {
+		
+		stuList = new ArrayList<>();
+		dataBase.put(ac, stuList);
 		String[] menu = {"입력","삭제","출력","수정","종료","로그아웃"};
 		int act = 0;
 		String introMsg = "◐◐◐◐◐◐◐학생 성적 관리 프로그램◑◑◑◑◑◑◑\n"+"학교 : " +user.getSchool()+"     학년 : "+user.getGrade()+"     반 : "+user.getClass_name();
@@ -199,7 +204,7 @@ public class Field {
 	//학생성적입력
 	public void input(Account user) {
 		String introMsg = "◐◐◐◐◐◐◐학생 성적 관리 프로그램◑◑◑◑◑◑◑\n"+"학교 : " +user.getSchool()+"     학년 : "+user.getGrade()+"     반 : "+user.getClass_name();
-
+		
 		boolean input = true, nameCh=true, s1Ch = true, s2Ch = true;
 		do {
 			//학생이름 입력
@@ -216,21 +221,25 @@ public class Field {
 				}
 			}while(nameCh);
 			
+			String pattern = "^[0-9]*$";
 			//중간고사 입력
 			do {
 				String s1 = JOptionPane.showInputDialog(introMsg + "\n\n중간고사 성적을 입력하세요.");
-				if(!s1.matches("^[0-9]$")) {
+				boolean regex = Pattern.matches(pattern, s1);
+				if(regex) {
 					st.setMid(Integer.parseInt(s1));
 					s1Ch = false;
 				}else {
 					JOptionPane.showMessageDialog(null, "숫자만 입력하세요.");
 				}
 			}while(s1Ch);
+				
 			
 			//기말고사 입력
 			do {
 				String s2 = JOptionPane.showInputDialog(introMsg + "\n\n기말고사 성적을 입력하세요.");
-				if(!s2.matches("^[0-9]$")) {
+				boolean regex = Pattern.matches(pattern, s2);
+				if(regex) {
 					st.setFin(Integer.parseInt(s2));
 					s2Ch = false;
 				}else {
@@ -240,23 +249,10 @@ public class Field {
 			
 			st.setSum(st.getMid()+st.getFin());
 			st.setAvg(st.getSum()/ 2.0);
-			st.setRank(1);
-			//등수 구하기
-//			for (int i = 0; i < stuList.size()-1; i++) {
-//				if(st.getSum()>st.getSum()) {
-//					st.setRank()++;
-//					
-//				}
-//			}
-			stuList.add(st);
-			dataBase.put(user, st);
-			Iterator<Object> i
-			for (int i = 0; i < array.length; i++) {
-				
-			}
-			System.out.println(dataBase.get(user));
 			
+			stuList.add(st);
 			show(user);
+			dataBase.put(user, stuList);
 			input = false;
 		}while(input);
 	}//end input
@@ -281,7 +277,7 @@ public class Field {
 		}else {
 			stuList.remove(delst);
 			JOptionPane.showMessageDialog(null, "해당 학생의 데이터가 삭제되었습니다.");
-			JOptionPane.showMessageDialog(null, stuList.toString());
+			show(user);
 		}
 		
 		
@@ -338,7 +334,21 @@ public class Field {
 	//출력(맨처음 
 	public void show(Account user) {
 		String introMsg = "◐◐◐◐◐◐◐학생 성적 관리 프로그램◑◑◑◑◑◑◑\n"+"학교 : " +user.getSchool()+"     학년 : "+user.getGrade()+"     반 : "+user.getClass_name()+"\n";
-		JOptionPane.showMessageDialog(null, introMsg+stuList.toString());
+		
+		if(dataBase.get(user).size()==0) {
+			JOptionPane.showMessageDialog(null, introMsg+"출력할 데이터가 없습니다.");
+		}else {
+			
+			//등수구하기 (두명까지만 완벽)
+			for(int i=0; i < dataBase.get(user).size();i++) {
+				for(int j=0; j < dataBase.get(user).size();j++) {
+					if(dataBase.get(user).get(i).getSum()<dataBase.get(user).get(j).getSum()) {
+						dataBase.get(user).get(i).setRank(dataBase.get(user).get(i).getRank()+1);
+					} 
+				}
+			}
+			JOptionPane.showMessageDialog(null, introMsg+dataBase.get(user));
+		}
 		
 	}
 }

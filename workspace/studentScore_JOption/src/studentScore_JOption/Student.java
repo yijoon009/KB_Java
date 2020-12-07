@@ -10,7 +10,7 @@ public class Student {
 	private int fin;
 	private int sum;
 	private double avg;
-	private int rank=0;
+	private int rank=1;
 	
 	public Student() {;}
 	
