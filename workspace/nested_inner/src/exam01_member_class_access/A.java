@@ -1,0 +1,29 @@
+package exam01_member_class_access;
+
+public class A {
+	class B{}
+	static class C{}
+	
+	//인스턴스 필드
+	B field1 = new B();
+	C field2 = new C();
+	
+	//인스턴스 메소드
+	void method1() {
+		B var1 = new B();
+		C var2 = new C();
+	}
+	
+	//정적 필드
+//	static B field3 = new B();
+
+	//static class C는 A 없어도 사용할 수 있기 때문에 사용 가능
+	static C field4 = new C();	
+	
+	//정적 메소드
+	static void method2() {
+//		B var1 = new B();
+		C var2 = new C();
+	}
+}
+
