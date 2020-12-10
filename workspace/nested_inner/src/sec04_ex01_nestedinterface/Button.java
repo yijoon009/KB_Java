@@ -4,6 +4,7 @@ public class Button {
 	
 	OnClickListener listner;
 	
+	//들어온 매개변수의 따라 그것의 onClick이 구현됨.
 	public void setOnClickListner(OnClickListener listner) {
 		this.listner = listner;
 	}
