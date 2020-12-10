@@ -40,10 +40,10 @@ class Student implements Comparable<Student>{
 	}
 	@Override
 	public String toString() {
-		return "Student [school_name=" + school_name + ", teacher_name=" + teacher_name + ", name=" + name + ", score="
-				+ score + "]";
+		return "school_name=" + school_name + ", teacher_name=" + teacher_name + ", name=" + name + ", score="
+				+ score ;
 	}
-	//이름순 - 오름파순
+	//이름순 - 오름ck순
 	//이름+점수 순 - 오름차순
 	@Override
 	public int compareTo(Student o) {
