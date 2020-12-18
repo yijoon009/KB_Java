@@ -1,4 +1,4 @@
-package lambda.api.pradicate;
+package lambda.api.predicate;
 
 
 import java.util.Arrays;
@@ -8,12 +8,12 @@ import java.util.function.Predicate;
 public class PredicateEx {
 
    static List<Student> list=Arrays.asList(
-         new Student("È«±æµ¿", "³²ÀÚ", 90),
-         new Student("±è¼øÈñ", "¿©ÀÚ", 90),
-         new Student("°¨ÀÚ¹Ù", "³²ÀÚ", 95),
-         new Student("¹ÚÇÑ³ª", "¿©ÀÚ", 92));
+         new Student("È«ï¿½æµ¿", "ï¿½ï¿½ï¿½ï¿½", 90),
+         new Student("ï¿½ï¿½ï¿½ï¿½ï¿½", "ï¿½ï¿½ï¿½ï¿½", 90),
+         new Student("ï¿½ï¿½ï¿½Ú¹ï¿½", "ï¿½ï¿½ï¿½ï¿½", 95),
+         new Student("ï¿½ï¿½ï¿½Ñ³ï¿½", "ï¿½ï¿½ï¿½ï¿½", 92));
    
-   private static double avg(Predicate<Student> predicate) { //avg()¸Þ¼Òµå Á¤ÀÇÇÔ 
+   private static double avg(Predicate<Student> predicate) { //avg()ï¿½Þ¼Òµï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 
       int count =0; int sum = 0;
       for(Student student : list) {
          if(predicate.test(student)) {
@@ -28,11 +28,11 @@ public class PredicateEx {
    
    public static void main(String[] args) {
       //boolean test(T t);
-       double maleAvg =  avg( t ->   t.getSex().equals("³²ÀÚ") );
-       System.out.println("³²ÀÚ Æò±Õ Á¡¼ö : " + maleAvg);
+       double maleAvg =  avg( t ->   t.getSex().equals("ï¿½ï¿½ï¿½ï¿½") );
+       System.out.println("ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ : " + maleAvg);
        
-       double femaleAvg =  avg( t ->   t.getSex().equals("¿©ÀÚ") );
-       System.out.println("¿©ÀÚ Æò±Õ Á¡¼ö : " + femaleAvg);
+       double femaleAvg =  avg( t ->   t.getSex().equals("ï¿½ï¿½ï¿½ï¿½") );
+       System.out.println("ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ : " + femaleAvg);
      
        }      
       

@@ -78,11 +78,11 @@ public class LambdaEx {
 
 }
 
-class Student{
+class Student1{
 	String name;
 	int engScore;
 	int mathScore;
-	public Student(String name, int engScore, int mathScore) {
+	public Student1(String name, int engScore, int mathScore) {
 		super();
 		this.name = name;
 		this.engScore = engScore;
