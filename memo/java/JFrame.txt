@@ -1,0 +1,22 @@
+Frame: 제일 큰 틀
+panel: 위에 덧그리는 용도(투명한 셀로판지느낌)
+Label : 입력창 앞에 쓰는 용도? 이름, 키, 체중, 성별 등등,,, lblstatus : 맨 아래 ##가 수정되었습니다
+textField : 입력창
+List : java.awt에 있는 목록 보여주기
+checkbox : 라디오방식(동그라미, 중복불가)
+checkboxGroup : checkbox 둘중에 왔다갔다 해야하니까 그룹핑
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
