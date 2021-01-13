@@ -1,0 +1,159 @@
+SQLPLUS / AS SYSDBA : 관리자 sys로 접속
+show user : 현재 접속한 사용자 보기
+sys : 모든 권한
+
+
+1. 권한 부여
+사용자 만들기 --> 권한있는 사용자가 권한이 없는 사용자에게 권한 부여
+
+
+2. 사용자 만들기
+가능한 위치 : 관리자(sys, system)에서 만들기
+SQL > create user [user_name] identified by [password];
+
+
+3. 사용자 접속
+방법1) windows > sqlplus [user_name] / [password]
+방법2) sql > conn [user_name] / [password]
+
+
+4. 접속할 권한 부여하기
+주의!! 권한이 있는 곳에서 권한을 부여해야한다.
+grant 권한내용 to user명
+SQL> grant create session to [user_name]
+
+
+5. 테이블 만들기 권한 주기
+tester1로 접속 > table 만들기 > 오류 > sys로부터 테이블 생성 권한부여받기 > 다시 만들기 > 성공!
+
+🔶테이블만들기 오류(ORA-01950: no privileges on tablespace 'SYSTEM') 없애기
+sys로 접속해서
+SQL> alter user tester1 quota 100m on users;
+SQL> grant unlimited tablespace to tester1;
+
+
+6. create view 권한 주기
+
+
+7.tester2
+tester1의 권한을 그대로 tester2에게 주기
+
+	1. sysdba에게 받아오기
+	2. tester1에게 받아오기
+
+tester1이 sysdba에 권한을 받을 때 with admin option붙이면 다른 사용자에게 권한을 줄 수 있다.
+실습) tester1이 tester2 권한주기 -> 권한 전달 안됨
+실습) sysdba가 tester1에게 권한을 줄때 with admin option 권한을 부여받고 -> tester1이 tester2권한주기 -> 권한 전달 됨
+
+SQL> grant create table, create view to tester1 with admin option;
+
+
+8. 모든 사용자에게 권한을 부여하기
+tester1, tester2 모두에게 권한 부여하기
+
+SQL> grant create sequence, create procedure, drop any table to public with admin option;
+
+
+9. 현재 자신이 부여받은 권한 살펴보기
+select * from user_tab_privs_made;
+
+
+10. 사용자 다양한 테이블
+다른 사용자가 다른 사용자의 테이블을 검색해보고싶을때
+사용자1이 사용자2의 테이블을 검색해보고 싶을때
+
+tester2 - tester1의 dept01 검색
+
+tester1에서
+SQL> grant select on dept01 to tester2;
+tester2에서
+SQL> select * from tester1.dept01;
+		   (스키마명.테이블명)
+
+스키마란? 객체(테이블, 뷰, 시퀀스 ,,,)를 소유한 사용자
+
+실습)tester2에서 삽입하기
+tester1 SQL> grant insert on dept01 to tester2;
+실습)tester2 삭제하기
+실습)tester2 update하기
+
+
+11. 권한 부여 뺏기(철회는 객체가 속한 스키마 내에서만 가능/ 근데 모든 권한을 가진 sys에서는 grant, revoke 전부 가능)
+
+tester1에서
+SQL> revoke select on dept01 from tester2;
+
+sys에서
+SQL> revoke select on tester1.dept01 from tester2;
+
+tester1에서 본인객체에만 grant, revoke 가능
+
+12. tester3 만들기
+SQL> grant insert on dept01 to tester3 with grant option;
+
+🔶with grant option 은 revoke 시 다른사용자에게도 부여한 권한을 같이 회수하지만 with admin option은 특정 사용자의 권한만 회수가 되고 나머지 다른사용자에게 부여된 권한은 회수가 되지 않습니다.
+
+
+13. tester2가 tester3에게 select권한을 주려고 함 -> 실패
+tester3가 tester2에게 insert권한을 주려고 함 -> 
+
+
+14. tester2의 권한을 select, update를 받아서 tester3에게 select 권한만 넘겨준다.
+
+tester1 - select, update -> tester2 -select -> tester3
+
+tester1에서
+SQL> grant select, update on dept01 to tester2 with grant option;
+tester2에서
+SQL> grant select on tester1.dept01 to tester3 with grant option;
+
+넘겨줄땐 with grant option;
+
+
+15. 철회하는 권한 (권한 부여한 곳에서 철회)
+
+tester3에 부여된 select 권한 뺏기
+SQL> conn tester2/0000;
+Connected.
+SQL> revoke select on tester1.dept01 from tester3;
+
+
+16. 역할 - ROLL
+
+DBA의 사전에 정의된 역할: CONNECT, RESOURCE
+tester5에 역할 부여
+
+SQL> create user tester5 identified by 0000;
+User created.
+SQL> grant connect, resource, dba to tester5;
+Grant succeeded.
+SQL> conn tester5/0000;
+Connected.
+SQL> grant create table to tester3;
+Grant succeeded.
+
+
+실습) 사용자에게 부여된 역할 확인하기
+사전 정의된 역할을 부여하고 역할 확인
+1. 관리자계정에서
+column table_name format a30
+column comments format a55
+select * from dict where table_name like '%ROLE%';
+
+2. cmd에서
+SQL> select * from dict where table_name like '%ROLE%';
+
+
+실습) 사용자 정의된 역할을 부여하고 확인
+관리자가 역할을 해당 부서에 맞게 만들기, 해당 직급에 맞게 만들기
+sys에서
+1. 역할을 만든다 
+SQL> create role mrole;
+2. 역할에 권한 부여 
+SQL> grant create session, create table, create view to mrole;
+3. 사용자에게 역할 부여
+SQL> create user tester6 identified by 0000;
+SQL> grant mrole to tester6;
+
+
+
